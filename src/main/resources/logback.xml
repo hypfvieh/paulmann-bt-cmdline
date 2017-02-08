@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id: %=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-% $ -->
+
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+
+	<appender name="app_stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] %logger{3} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+    </appender>
+
+    <logger name="org.freedesktop" level="WARN" />
+
+    <!-- root logger -->
+    <root level="DEBUG">
+        <appender-ref ref="app_stdout" />
+    </root>
+
+</configuration>
