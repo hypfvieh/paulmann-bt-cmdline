@@ -6,7 +6,7 @@
 	<groupId>com.github.hypfvieh.paulmann</groupId>
 	<artifactId>paulmann-bt-cmdline</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1</version>
+	<version>0.0.2-SNAPSHOT</version>
 
 	<name>${project.artifactId}</name>
 
@@ -21,9 +21,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.caseof.paulmann</groupId>
+			<groupId>com.github.hypfvieh.paulmann</groupId>
 			<artifactId>paulmann-bt-lib</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
