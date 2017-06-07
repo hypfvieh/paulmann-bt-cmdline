@@ -18,10 +18,10 @@ public class BlueMain {
             @Override
             public void handle(PropertiesChanged _s) {
                 if (_s.getPropertiesChanged() != null && !_s.getPropertiesChanged().isEmpty()) {
-                    System.out.println("Got changed properties: " + _s.getPropertiesChanged());
+                  //  System.out.println("Got changed properties: " + _s.getPropertiesChanged());
                 }
                 if (_s.getPropertiesRemoved() != null && !_s.getPropertiesRemoved().isEmpty()) {
-                    System.out.println("Properties removed: " + _s.getPropertiesRemoved());
+                  //  System.out.println("Properties removed: " + _s.getPropertiesRemoved());
                 }
             }
         };
