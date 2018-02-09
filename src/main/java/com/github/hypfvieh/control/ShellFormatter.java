@@ -1,6 +1,6 @@
 package com.github.hypfvieh.control;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;
