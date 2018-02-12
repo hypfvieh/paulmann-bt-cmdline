@@ -90,7 +90,6 @@ public class EmbeddedShell implements Closeable {
                 .system(false)
                 .streams(getInStream(), getOutStream())
                 .signalHandler(Terminal.SignalHandler.SIG_IGN)
-                .type("dumb")
                 .nativeSignals(true)
                 .build();
 
