@@ -87,7 +87,7 @@ public class EmbeddedShell implements Closeable {
     void createAndConfigureTerminal() throws IOException {
 
         terminal = TerminalBuilder.builder()
-                .system(false)
+                .system(true)
                 .streams(getInStream(), getOutStream())
                 .signalHandler(Terminal.SignalHandler.SIG_IGN)
                 .nativeSignals(true)
@@ -210,6 +210,9 @@ public class EmbeddedShell implements Closeable {
      * @throws InterruptedIOException
      */
     private void handleUserInput(String _msg) throws InterruptedIOException {
+        if (_msg == null) {
+            return;
+        }
         _msg = StringUtils.trim(_msg);
 
         // parse given command

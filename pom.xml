@@ -23,85 +23,69 @@
 
 	<build>
 		<plugins>
+
 			<plugin>
+				<!-- Build an executable JAR -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.0.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<archive>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>${mainClass}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
-		<plugin>
-                <!-- Build an executable JAR -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>${mainClass}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
-		<plugin>
-                <!-- http://maven.apache.org/plugins/maven-shade-plugin/ -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <!-- minimizeJar>true</minimizeJar -->
-                            <!-- shadedArtifactId>${project.artifactId}-ueber</shadedArtifactId -->
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>ueber</shadedClassifierName>
-
-                            <!-- automatically remove all classes of dependencies that are not used by the project -->
-                            <minimizeJar>false</minimizeJar>
-
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                    <!-- Exclude to avoid SecurityException: Invalid signature file digest for Manifest main attributes -->
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-
-                            <!-- exclude selected Jars to reduce size of the Uber jar -->
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>*:*:*:test</exclude>
-                                </excludes>
-                            </artifactSet>
-
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+		
+			<plugin>
+				<!-- http://maven.apache.org/plugins/maven-shade-plugin/ -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<!-- minimizeJar>true</minimizeJar -->
+							<!-- shadedArtifactId>${project.artifactId}-ueber</shadedArtifactId -->
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>ueber</shadedClassifierName>
+		
+							<!-- automatically remove all classes of dependencies that are not used 
+								by the project -->
+							<minimizeJar>false</minimizeJar>
+		
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<!-- Exclude to avoid SecurityException: Invalid signature file digest 
+											for Manifest main attributes -->
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+		
+							<!-- exclude selected Jars to reduce size of the Uber jar -->
+							<artifactSet>
+								<excludes>
+									<exclude>*:*:*:test</exclude>
+								</excludes>
+							</artifactSet>
+		
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 		</plugins>
 	</build>

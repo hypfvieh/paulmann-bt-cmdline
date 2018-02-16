@@ -2,6 +2,8 @@ package com.github.hypfvieh;
 
 import org.freedesktop.dbus.AbstractPropertiesHandler;
 import org.freedesktop.dbus.SignalAwareProperties.PropertiesChanged;
+import org.jline.reader.EndOfFileException;
+import org.slf4j.LoggerFactory;
 
 import com.github.hypfvieh.control.EmbeddedShell;
 
@@ -11,8 +13,8 @@ public class BlueMain {
 
 
     public static void main(String[] _args) {
-        boolean stopLoop = false;
-
+        LoggerFactory.getLogger(BlueMain.class).debug("Initializing Shell");
+        
         // Sample on how to use PropertiesChanged callback
         AbstractPropertiesHandler propertiesHandler = new AbstractPropertiesHandler() {
             @Override
@@ -28,15 +30,15 @@ public class BlueMain {
 
         PaulmannDeviceController.getInstance().registerPropertyHandler(propertiesHandler);
 
-        while (!stopLoop) {
-            try(EmbeddedShell shell = new EmbeddedShell(System.in, System.out, System.err))  {
-                shell.start("bleCmd > ");
-            } catch (Exception _ex) {
-                stopLoop = true;
-                System.err.println(_ex.getMessage());
-                // system exit is not the proper way, but jline does not stop its pump-thread when calling 'close()'
-                System.exit(0);
-            }
+        try(EmbeddedShell shell = new EmbeddedShell(System.in, System.out, System.err))  {
+            shell.start("bleCmd > ");
+        } catch (Exception _ex) {
+            if (! (_ex instanceof EndOfFileException)) { // EndOfFileException will occur when using CTRL+D to exit shell
+                System.err.println("Error: " + _ex.getMessage());
+            }            
+        } finally {
+            LoggerFactory.getLogger(BlueMain.class).debug("Deinitializing Shell");
+            PaulmannDeviceController.getInstance().deinitialize();
         }
 
     }
