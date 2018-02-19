@@ -9,6 +9,7 @@ import org.jline.terminal.Terminal;
 import com.github.hypfvieh.PaulmannDeviceController;
 import com.github.hypfvieh.PaulmannDeviceController.DeviceDetails;
 import com.github.hypfvieh.control.ShellFormatter;
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
 
 public class ShowDeviceDetailsCommand extends AbstractCommand {
 
@@ -36,13 +37,6 @@ public class ShowDeviceDetailsCommand extends AbstractCommand {
     public String getDescription() {
         return "List all known bluetooth details of all found bluetooth devices";
     }
-
-
-    @Override
-    public String getCommandArgs() {
-        return "";
-    }
-
 
     @Override
     public String getCommandName() {

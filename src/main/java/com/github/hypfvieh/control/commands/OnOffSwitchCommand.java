@@ -2,15 +2,17 @@ package com.github.hypfvieh.control.commands;
 
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 
 import com.github.hypfvieh.PaulmannDeviceController;
 import com.github.hypfvieh.control.ShellFormatter;
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
+import com.github.hypfvieh.control.commands.base.CommandArg;
+import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
 import com.github.hypfvieh.paulmann.features.AbstractBluetoothIntValFeature;
 import com.github.hypfvieh.paulmann.features.BluetoothOnOffFeature;
@@ -70,23 +72,21 @@ public class OnOffSwitchCommand extends AbstractCommand {
     }
 
     @Override
-    public String getCommandArgs() {
-        return "deviceMacAddress on|off|status";
+    public List<CommandArg> getCommandArgs() {
+        CommandArg cmdArg = new CommandArg("deviceMacAddress", true, true, () -> {
+            List<ArgWithDescription> args = new ArrayList<>();
+            args.add(new ArgWithDescription("on", "Switch device on"));
+            args.add(new ArgWithDescription("off", "Switch device off"));
+            args.add(new ArgWithDescription("status", "Get current device status"));
+           return args;
+        });
+        
+        return Arrays.asList(cmdArg);
     }
 
     @Override
     public String getDescription() {
         return "Turn on/off switchable device or get the current switch status";
-    }
-
-    @Override
-    public List<Completer> getArgCompleters() {
-
-        ArrayList<Completer> arrayList = new ArrayList<>();
-        arrayList.add(new StringsCompleter(PaulmannDeviceController.getInstance().getDevices().keySet()));
-        arrayList.add(new StringsCompleter("on", "off"));
-
-        return arrayList;
     }
 
 }

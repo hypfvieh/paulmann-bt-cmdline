@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.jline.terminal.Terminal;
 
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
+
 public class ExitCommand extends AbstractCommand {
     @Override
     public String[] execute(List<String> _arguments, Terminal _terminal) throws InterruptedIOException {

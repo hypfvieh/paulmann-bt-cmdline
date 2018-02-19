@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jline.reader.Completer;
 import org.jline.reader.impl.completer.AggregateCompleter;
 import org.jline.reader.impl.completer.ArgumentCompleter;
+import org.jline.reader.impl.completer.NullCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStringBuilder;
@@ -19,16 +20,13 @@ import org.jline.utils.AttributedStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.hypfvieh.control.commands.AbstractCommand;
 import com.github.hypfvieh.control.commands.ExitCommand;
-import com.github.hypfvieh.control.commands.IRemoteCommand;
-import com.github.hypfvieh.control.commands.OnOffSwitchCommand;
-import com.github.hypfvieh.control.commands.ScanCommand;
-import com.github.hypfvieh.control.commands.SetBrightnessCommand;
-import com.github.hypfvieh.control.commands.SetDevicePasswordCommand;
-import com.github.hypfvieh.control.commands.ShowDeviceDetailsCommand;
-import com.github.hypfvieh.control.commands.ShowDevicesCommand;
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
+import com.github.hypfvieh.control.commands.base.CommandArg;
+import com.github.hypfvieh.control.commands.base.ICommand;
+import com.github.hypfvieh.control.commands.init.AbstractInitializationCommand;
 import com.github.hypfvieh.control.jline3.AnsiStringSplit;
+import com.github.hypfvieh.control.jline3.ArgumentWithDescriptionCompleter;
 import com.github.hypfvieh.control.jline3.RemoteCommandCompleter;
 import com.github.hypfvieh.formatter.TableColumnFormatter;
 
@@ -44,7 +42,7 @@ public class CommandRegistry {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final Map<String, IRemoteCommand> supportedCommands = new HashMap<>();
+    private final Map<String, ICommand> supportedCommands = new HashMap<>();
 
     /** Create the {@link AggregateCompleter} with an empty list to allow adding entries later on. */
     private final AggregateCompleter jlineCompleter = new AggregateCompleter(new ArrayList<>());
@@ -56,15 +54,6 @@ public class CommandRegistry {
         // always register the help and exit commands
         registerCommand(new BuiltinHelpCommand());
         registerCommand(new ExitCommand());
-
-        // others
-        registerCommand(new ScanCommand());
-        registerCommand(new ShowDevicesCommand());
-        registerCommand(new ShowDeviceDetailsCommand());
-        registerCommand(new SetBrightnessCommand());
-        registerCommand(new OnOffSwitchCommand());
-        registerCommand(new SetDevicePasswordCommand());
-
     }
 
     /**
@@ -72,7 +61,7 @@ public class CommandRegistry {
      *
      * @return
      */
-    public static CommandRegistry getInstance() {
+    static CommandRegistry getInstance() {
         return INSTANCE;
     }
 
@@ -81,11 +70,16 @@ public class CommandRegistry {
      *
      * @param _command
      */
-    public void registerCommand(IRemoteCommand _command) {
+    public void registerCommand(ICommand _command) {
         if (_command == null) {
             throw new IllegalArgumentException("Null is no valid command");
         }
 
+        if (_command instanceof AbstractInitializationCommand) {
+            logger.debug("Initialization command cannot be registered: {}", _command.getClass());
+            return;
+        }
+        
         if (StringUtils.isBlank(_command.getCommandName())) {
             throw new IllegalArgumentException("Command '" + _command.getCommandName() + "' is no valid command name!");
         }
@@ -121,8 +115,12 @@ public class CommandRegistry {
 
         // add all completers specified by the command for this command (each completer is responsible for one argument
         // of the command)
-        if (_command.getArgCompleters() != null && !_command.getArgCompleters().isEmpty()) {
-            argCompleter.getCompleters().addAll(_command.getArgCompleters());
+        
+        if (_command.getCommandArgs() != null && !_command.getCommandArgs().isEmpty()) {
+            for (CommandArg arg : _command.getCommandArgs()) {
+                argCompleter.getCompleters().add(new ArgumentWithDescriptionCompleter(arg.getArguments()));
+            }
+            argCompleter.getCompleters().add(new NullCompleter());
         }
 
         // put the new argument completer in the AggregateCompleter
@@ -134,7 +132,7 @@ public class CommandRegistry {
      *
      * @param _commandExecutor
      */
-    public void unregisterRemoteCommand(IRemoteCommand _commandExecutor) {
+    public void unregisterRemoteCommand(ICommand _commandExecutor) {
         if (_commandExecutor != null && !StringUtils.isBlank(_commandExecutor.getCommandName())) {
             unregisterRemoteCommand(_commandExecutor.getCommandName());
         } else {
@@ -161,7 +159,7 @@ public class CommandRegistry {
      *
      * @return
      */
-    public Map<String, IRemoteCommand> getRegisteredCommands() {
+    public Map<String, ICommand> getRegisteredCommands() {
         return Collections.unmodifiableMap(supportedCommands);
     }
 
@@ -193,7 +191,7 @@ public class CommandRegistry {
         private final int HDR_ALIASES_LEN = 15;
         private final int HDR_ARGUMENTS_LEN = 29;
 
-        private final int HDR_DESCRIPTION_LEN = IRemoteCommand.DEFAULT_SHELL_WIDTH - HDR_COMMAND_LEN - HDR_ALIASES_LEN
+        private final int HDR_DESCRIPTION_LEN = ICommand.DEFAULT_SHELL_WIDTH - HDR_COMMAND_LEN - HDR_ALIASES_LEN
                 - HDR_ARGUMENTS_LEN - (3 * HDR_SPACER.length());
 
         @Override
@@ -220,7 +218,7 @@ public class CommandRegistry {
             text.add(tableColumnFormatter.formatLine(HDR_COMMAND, HDR_ALIASES, HDR_ARGUMENTS, HDR_DESCRIPTION));
             text.add(tableColumnFormatter.fillLine('-'));
 
-            for (Entry<String, IRemoteCommand> entry : supportedCommands.entrySet()) {
+            for (Entry<String, ICommand> entry : supportedCommands.entrySet()) {
 
                 String[] aliases = entry.getValue().getCommandAliases();
 
@@ -257,7 +255,7 @@ public class CommandRegistry {
 
                 String paddedCommand = StringUtils.rightPad(commandName.toString(), HDR_COMMAND_LEN);
                 String line = tableColumnFormatter.formatLine(paddedCommand, cAliases,
-                        entry.getValue().getCommandArgs(), entry.getValue().getDescription());
+                        StringUtils.join(", ", entry.getValue().getCommandArgs()), entry.getValue().getDescription());
 
                 line = line.replace(paddedCommand, formattedCommandName);
 
@@ -287,13 +285,13 @@ public class CommandRegistry {
         }
 
         @Override
-        public String getCommandArgs() {
-            return "[command]";
+        public List<CommandArg> getCommandArgs() {
+            return Arrays.asList(new CommandArg("command", true));
         }
 
         @Override
         public String getCmdGroup() {
-            return IRemoteCommand.CMDGRP_GENERAL;
+            return ICommand.CMDGRP_GENERAL;
         }
 
     }

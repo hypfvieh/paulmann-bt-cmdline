@@ -1,16 +1,19 @@
 package com.github.hypfvieh.control.commands;
 
 import java.io.InterruptedIOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 
 import com.github.hypfvieh.PaulmannDeviceController;
 import com.github.hypfvieh.control.ShellFormatter;
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
+import com.github.hypfvieh.control.commands.base.CommandArg;
+import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
 import com.github.hypfvieh.paulmann.features.BluetoothRgbFeature;
 import com.github.hypfvieh.paulmann.features.FeatureIdent;
@@ -73,22 +76,31 @@ public class SetRgbCommand extends AbstractCommand {
     }
 
     @Override
-    public String getCommandArgs() {
-        return "deviceMacAddress red-value green-value blue-value";
+    public List<CommandArg> getCommandArgs() {
+        CommandArg deviceMacAddress = new CommandArg("deviceMacAddress", true, false, () -> {
+            return PaulmannDeviceController.getInstance().getDevices().values().stream()
+                    .map(k -> new ArgWithDescription(k.getDevice().getAddress(), k.getDevice().getName()))
+                    .collect(Collectors.toList());
+        });
+        
+        CommandArg brightnessRed = new CommandArg("red-value", true, true, () -> {
+            return IntStream.range(0, 255).mapToObj(i -> new ArgWithDescription(String.valueOf(i), null)).collect(Collectors.toList());
+        });
+
+        CommandArg brightnessGreen = new CommandArg("green-value", true, true, () -> {
+            return IntStream.range(0, 255).mapToObj(i -> new ArgWithDescription(String.valueOf(i), null)).collect(Collectors.toList());
+        });
+
+        CommandArg brightnessBlue = new CommandArg("blue-value", true, true, () -> {
+            return IntStream.range(0, 255).mapToObj(i -> new ArgWithDescription(String.valueOf(i), null)).collect(Collectors.toList());
+        });
+
+        return Arrays.asList(deviceMacAddress, brightnessRed, brightnessGreen, brightnessBlue);
     }
 
     @Override
     public String getDescription() {
         return "Set the RGB colors of the given device. Values from 0-255 are allowed.";
-    }
-
-    @Override
-    public List<Completer> getArgCompleters() {
-
-        ArrayList<Completer> arrayList = new ArrayList<>();
-        arrayList.add(new StringsCompleter(PaulmannDeviceController.getInstance().getDevices().keySet()));
-
-        return arrayList;
     }
 
 }

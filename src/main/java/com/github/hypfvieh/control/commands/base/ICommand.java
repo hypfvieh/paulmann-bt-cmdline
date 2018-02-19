@@ -1,20 +1,18 @@
-package com.github.hypfvieh.control.commands;
+package com.github.hypfvieh.control.commands.base;
 
 import java.io.InterruptedIOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.jline.reader.Completer;
 import org.jline.terminal.Terminal;
 
-public interface IRemoteCommand {
+public interface ICommand {
 
     public static final int DEFAULT_SHELL_WIDTH = 105; // minimum characters per line if not overridden by ENV_TERM
 
     public static final String CMDGRP_GENERAL = "General";
 
     public static final String NL = System.getProperty("line.separator");
-
+    
     /**
      * Command which will be executed.
      * To terminate the remote shell session throw {@link InterruptedIOException}.
@@ -55,23 +53,12 @@ public interface IRemoteCommand {
     }
 
     /**
-     * Expected arguments as String (used for display in help).
+     * List of arguments and the possible values, used to create proper completer.
      *
      * @return defaults to no arguments
      */
-    default String getCommandArgs() {
-        return "";
-    }
-
-    /**
-     * Completer for arguments.
-     * Each entry in the returned array should be a completer for one argument of the command.
-     * You have to use the correct order to match your commands argument order, as the completers are used in array sort order!
-     *
-     * @return defaults to no arguments completion
-     */
-    default List<Completer> getArgCompleters() {
-        return new ArrayList<>();
+    default List<CommandArg> getCommandArgs() {
+        return CommandArg.NO_ARGS;
     }
 
     /**
@@ -83,7 +70,14 @@ public interface IRemoteCommand {
         return CMDGRP_GENERAL;
     }
 
+    /**
+     * Extended help text displayed when using "help commandName".
+     * 
+     * @param _terminal
+     * @return defaults to 'No additional help available.'
+     */
     default String[] getHelpText(Terminal _terminal) {
         return new String[] {"No additional help available."};
     }
+   
 }

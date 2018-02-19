@@ -12,7 +12,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 import org.jline.utils.AttributedString;
 
-import com.github.hypfvieh.control.commands.IRemoteCommand;
+import com.github.hypfvieh.control.commands.base.ICommand;
 
 public class RemoteCommandCompleter implements Completer {
     protected final Collection<Candidate> candidates = new ArrayList<>();
@@ -21,17 +21,17 @@ public class RemoteCommandCompleter implements Completer {
 
     }
 
-    public RemoteCommandCompleter(IRemoteCommand... _strings) {
+    public RemoteCommandCompleter(ICommand... _strings) {
         this(Arrays.asList(_strings));
     }
 
-    public RemoteCommandCompleter(Collection<IRemoteCommand> _strings) {
-        for (IRemoteCommand cmd : _strings) {
+    public RemoteCommandCompleter(Collection<ICommand> _strings) {
+        for (ICommand cmd : _strings) {
             candidates.add(new Candidate(AttributedString.stripAnsi(cmd.getCommandName()), cmd.getCommandName(), cmd.getCmdGroup(), cmd.getDescription(), null, null, true));
         }
     }
 
-    public void addCommand(IRemoteCommand _cmd) {
+    public void addCommand(ICommand _cmd) {
         if (_cmd != null && !StringUtils.isBlank(_cmd.getCommandName())) {
             candidates.add(new Candidate(AttributedString.stripAnsi(_cmd.getCommandName()), _cmd.getCommandName(), _cmd.getCmdGroup(), _cmd.getDescription(), null, null, true));
         }

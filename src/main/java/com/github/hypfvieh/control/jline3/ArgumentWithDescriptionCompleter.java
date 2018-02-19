@@ -27,29 +27,10 @@ public class ArgumentWithDescriptionCompleter implements Completer {
             candidates.add(new Candidate(AttributedString.stripAnsi(arg.getArgument()), arg.getArgument(), null, arg.getHelp(), null, null, true));
         }
     }
-
+    
     public void complete(LineReader _reader, final ParsedLine _commandLine, final List<Candidate> _candidates) {
         assert _commandLine != null;
         assert _candidates != null;
         _candidates.addAll(this.candidates);
-    }
-
-    public static class ArgWithDescription {
-        private final String argument;
-        private final String description;
-
-        public ArgWithDescription(String _argument, String _desc) {
-            argument = _argument;
-            description = _desc;
-        }
-
-        public String getArgument() {
-            return argument;
-        }
-
-        public String getHelp() {
-            return description;
-        }
-
     }
 }

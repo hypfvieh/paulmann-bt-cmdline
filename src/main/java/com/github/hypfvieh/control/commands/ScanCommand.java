@@ -2,6 +2,7 @@ package com.github.hypfvieh.control.commands;
 
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jline.terminal.Terminal;
@@ -11,6 +12,10 @@ import org.jline.utils.AttributedStyle;
 import com.github.hypfvieh.PaulmannDeviceController;
 import com.github.hypfvieh.PaulmannDeviceController.DeviceDetails;
 import com.github.hypfvieh.control.ShellFormatter;
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
+import com.github.hypfvieh.control.commands.base.CommandArg;
+import com.github.hypfvieh.control.commands.base.ICommand;
+import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.util.ConverterUtil;
 import com.github.hypfvieh.util.TypeUtil;
 
@@ -44,7 +49,7 @@ public class ScanCommand extends AbstractCommand {
             }
         } catch (InterruptedException _ex) {
             sb.style(AttributedStyle.BOLD.foreground(AttributedStyle.RED));
-            sb.append(wordAwareTrimToLength("Error while scanning for new devices: " + _ex.getMessage(), IRemoteCommand.DEFAULT_SHELL_WIDTH, 0));
+            sb.append(wordAwareTrimToLength("Error while scanning for new devices: " + _ex.getMessage(), ICommand.DEFAULT_SHELL_WIDTH, 0));
 
             return new String[] {"", formatter.print(sb), ""};
         }
@@ -60,8 +65,14 @@ public class ScanCommand extends AbstractCommand {
 
 
     @Override
-    public String getCommandArgs() {
-        return "[scanTimeInSeconds] [showUnsupported]";
+    public List<CommandArg> getCommandArgs() {
+        
+        CommandArg scanTimeInSecs = new CommandArg("scanTimeInSeconds", true);
+        CommandArg showUnsupported = new CommandArg("scanTimeInSeconds", true, true, () -> {
+            return Arrays.asList(new ArgWithDescription("true", "Show unsupported"), new ArgWithDescription("false", "Do not show unsupported (default)"));
+        });
+                
+        return Arrays.asList(scanTimeInSecs, showUnsupported);
     }
 
 

@@ -8,6 +8,7 @@ import org.jline.terminal.Terminal;
 
 import com.github.hypfvieh.PaulmannDeviceController;
 import com.github.hypfvieh.control.ShellFormatter;
+import com.github.hypfvieh.control.commands.base.AbstractCommand;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
 
 public class ShowDevicesCommand extends AbstractCommand {
@@ -32,12 +33,6 @@ public class ShowDevicesCommand extends AbstractCommand {
     @Override
     public String getDescription() {
         return "List all previously found devices";
-    }
-
-
-    @Override
-    public String getCommandArgs() {
-        return "";
     }
 
 
