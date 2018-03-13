@@ -118,7 +118,13 @@ public class CommandRegistry {
         
         if (_command.getCommandArgs() != null && !_command.getCommandArgs().isEmpty()) {
             for (CommandArg arg : _command.getCommandArgs()) {
-                argCompleter.getCompleters().add(new ArgumentWithDescriptionCompleter(arg.getArguments()));
+                if (arg.isRequired()) {
+                    argCompleter.getCompleters().add(new ArgumentWithDescriptionCompleter(arg.getArguments()));
+                } else if (arg.getArguments() != null && !arg.getArguments().isEmpty()) {
+                    argCompleter.getCompleters().add(new ArgumentWithDescriptionCompleter(arg.getArguments()));
+                } else {
+                    argCompleter.getCompleters().add(new NullCompleter());
+                }
             }
             argCompleter.getCompleters().add(new NullCompleter());
         }

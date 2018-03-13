@@ -4,6 +4,7 @@ import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jline.terminal.Terminal;
@@ -54,7 +55,7 @@ public class OnOffSwitchCommand extends AbstractCommand {
                         return printSuccess(formatter, "Current device status: " + (readInt == 1 ? "on" : "off"));
                     }
                 } else {
-                    if (!devFeature.toggle(switchOn)) {
+                    if (!devFeature.toggle(switchOn)) {                       
                         return printError(formatter, "Could not switch device " + (switchOn ? "on" : "off"));
                     } else {
                         return printSuccess(formatter, "Successfully switch device " + (switchOn ? "on" : "off"));
@@ -74,14 +75,21 @@ public class OnOffSwitchCommand extends AbstractCommand {
     @Override
     public List<CommandArg> getCommandArgs() {
         CommandArg cmdArg = new CommandArg("deviceMacAddress", true, true, () -> {
+            return PaulmannDeviceController.getInstance().getDevices().entrySet()
+                .stream().map(e -> new ArgWithDescription(e.getKey(), e.getValue().getClass().getSimpleName()))
+                .collect(Collectors.toList());
+        });
+
+        CommandArg cmdArgOnOff = new CommandArg("operation", true, true, () -> {
             List<ArgWithDescription> args = new ArrayList<>();
             args.add(new ArgWithDescription("on", "Switch device on"));
             args.add(new ArgWithDescription("off", "Switch device off"));
             args.add(new ArgWithDescription("status", "Get current device status"));
            return args;
         });
+
         
-        return Arrays.asList(cmdArg);
+        return Arrays.asList(cmdArg, cmdArgOnOff);
     }
 
     @Override

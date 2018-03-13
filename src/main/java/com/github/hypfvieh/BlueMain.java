@@ -1,7 +1,5 @@
 package com.github.hypfvieh;
 
-import org.freedesktop.dbus.AbstractPropertiesHandler;
-import org.freedesktop.dbus.SignalAwareProperties.PropertiesChanged;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 import org.slf4j.Logger;
@@ -25,21 +23,6 @@ public class BlueMain {
     public static void main(String[] _args) {
         Logger logger = LoggerFactory.getLogger(BlueMain.class);
         logger.debug("Initializing Shell");
-        
-        // Sample on how to use PropertiesChanged callback
-        AbstractPropertiesHandler propertiesHandler = new AbstractPropertiesHandler() {
-            @Override
-            public void handle(PropertiesChanged _s) {
-                if (_s.getPropertiesChanged() != null && !_s.getPropertiesChanged().isEmpty()) {
-                  //  System.out.println("Got changed properties: " + _s.getPropertiesChanged());
-                }
-                if (_s.getPropertiesRemoved() != null && !_s.getPropertiesRemoved().isEmpty()) {
-                  //  System.out.println("Properties removed: " + _s.getPropertiesRemoved());
-                }
-            }
-        };
-
-        PaulmannDeviceController.getInstance().registerPropertyHandler(propertiesHandler);
 
         try(EmbeddedShell shell = new EmbeddedShell(System.in, System.out, System.err))  {
             // initialize the shell

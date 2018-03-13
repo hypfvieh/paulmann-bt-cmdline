@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.bluez.exceptions.BluezDoesNotExistsException;
+import org.bluez.exceptions.BluezDoesNotExistException;
 import org.jline.terminal.Terminal;
 
 import com.github.hypfvieh.bluetooth.DeviceManager;
@@ -34,7 +34,7 @@ public class SelectAdapter extends AbstractCommand {
         try {
             DeviceManager.getInstance().setDefaultAdapter(findFirst.get());            
             return printSuccess(sf, "Adapter successfully set to " + _arguments.get(0));
-        } catch (BluezDoesNotExistsException _ex) {            
+        } catch (BluezDoesNotExistException _ex) {            
             return printError(sf, "Adapter with identifier '" + _arguments.get(0) + "' does not exist.");
         }
     }

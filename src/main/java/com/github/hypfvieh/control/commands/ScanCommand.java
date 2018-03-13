@@ -38,6 +38,7 @@ public class ScanCommand extends AbstractCommand {
         List<String> resultText = new ArrayList<>();
         try {
             PaulmannDeviceController.getInstance().scanForDevices(timeout);
+            PaulmannDeviceController.getInstance().refreshDevices();
             List<DeviceDetails> listAllRawDevices = PaulmannDeviceController.getInstance().listAllRawDevices(showUnsupported);
             if (listAllRawDevices.isEmpty()) {
                 resultText.add("No devices found");
