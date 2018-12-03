@@ -15,7 +15,7 @@ import com.github.hypfvieh.control.commands.base.AbstractCommand;
 import com.github.hypfvieh.control.commands.base.CommandArg;
 import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
-import com.github.hypfvieh.paulmann.features.BluetoothRgbFeature;
+import com.github.hypfvieh.paulmann.features.RgbFeature;
 import com.github.hypfvieh.paulmann.features.FeatureIdent;
 
 public class SetRgbCommand extends AbstractCommand {
@@ -52,7 +52,7 @@ public class SetRgbCommand extends AbstractCommand {
         if (device == null) {
             return printError(formatter, "No device with MAC address " + _arguments.get(0) + " found.");
         } else {
-            BluetoothRgbFeature feature = device.getFeature(FeatureIdent.PAULMANN_RGB_FEATURE);
+            RgbFeature feature = device.getFeature(FeatureIdent.PAULMANN_RGB_FEATURE);
             if (feature != null) {
                 if (feature.getMaxValue(null) < red || feature.getMaxValue(null) < green || feature.getMaxValue(null) < blue) {
                     return printError(formatter, "One of the given color channel values (red = " + red + ", green = " + green + ", blue = " + blue + ") are higher than the allowed maximum of " + feature.getMaxValue(null));

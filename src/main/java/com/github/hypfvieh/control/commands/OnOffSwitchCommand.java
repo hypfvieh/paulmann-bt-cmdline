@@ -15,8 +15,8 @@ import com.github.hypfvieh.control.commands.base.AbstractCommand;
 import com.github.hypfvieh.control.commands.base.CommandArg;
 import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
-import com.github.hypfvieh.paulmann.features.AbstractBluetoothIntValFeature;
-import com.github.hypfvieh.paulmann.features.BluetoothOnOffFeature;
+import com.github.hypfvieh.paulmann.features.AbstractByteValFeature;
+import com.github.hypfvieh.paulmann.features.OnOffFeature;
 import com.github.hypfvieh.paulmann.features.FeatureIdent;
 
 public class OnOffSwitchCommand extends AbstractCommand {
@@ -45,11 +45,11 @@ public class OnOffSwitchCommand extends AbstractCommand {
         if (device == null) {
             return printError(formatter, "No device with MAC address " + _arguments.get(0) + " found.");
         } else {
-            BluetoothOnOffFeature devFeature = device.getFeature(FeatureIdent.PAULMANN_ON_OFF_FEATURE);
+            OnOffFeature devFeature = device.getFeature(FeatureIdent.PAULMANN_ON_OFF_FEATURE);
             if (devFeature != null) {
                 if (status) {
                     int readInt = devFeature.readByte();
-                    if (readInt == AbstractBluetoothIntValFeature.ERROR_RETURN) {
+                    if (readInt == AbstractByteValFeature.ERROR_RETURN) {
                         return printError(formatter, "Could get device status");
                     } else {
                         return printSuccess(formatter, "Current device status: " + (readInt == 1 ? "on" : "off"));

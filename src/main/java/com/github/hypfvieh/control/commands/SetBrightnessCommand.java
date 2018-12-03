@@ -15,7 +15,7 @@ import com.github.hypfvieh.control.commands.base.AbstractCommand;
 import com.github.hypfvieh.control.commands.base.CommandArg;
 import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
-import com.github.hypfvieh.paulmann.features.BluetoothBrightnessFeature;
+import com.github.hypfvieh.paulmann.features.BrightnessFeature;
 import com.github.hypfvieh.paulmann.features.FeatureIdent;
 
 public class SetBrightnessCommand extends AbstractCommand {
@@ -42,7 +42,7 @@ public class SetBrightnessCommand extends AbstractCommand {
         if (device == null) {
             return printError(formatter, "No device with MAC address " + _arguments.get(0) + " found.");
         } else {
-            BluetoothBrightnessFeature devFeature = device.getFeature(FeatureIdent.PAULMANN_BRIGHTNESS_FEATURE);
+            BrightnessFeature devFeature = device.getFeature(FeatureIdent.PAULMANN_BRIGHTNESS_FEATURE);
             if (devFeature != null) {
                 if (intVal > devFeature.getMaxValue()) {
                     return printError(formatter, "Given brightness value " + intVal + " is higher than the allowed maximum of " + devFeature.getMaxValue());

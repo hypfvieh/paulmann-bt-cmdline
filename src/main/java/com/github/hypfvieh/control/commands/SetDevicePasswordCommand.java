@@ -15,7 +15,7 @@ import com.github.hypfvieh.control.commands.base.AbstractCommand;
 import com.github.hypfvieh.control.commands.base.CommandArg;
 import com.github.hypfvieh.control.jline3.ArgWithDescription;
 import com.github.hypfvieh.paulmann.devices.AbstractPaulmannDevice;
-import com.github.hypfvieh.paulmann.features.BluetoothDevicePasswordFeature;
+import com.github.hypfvieh.paulmann.features.DevicePasswordFeature;
 import com.github.hypfvieh.paulmann.features.FeatureIdent;
 
 public class SetDevicePasswordCommand extends AbstractCommand {
@@ -44,7 +44,7 @@ public class SetDevicePasswordCommand extends AbstractCommand {
         if (device == null) {
             return printError(formatter, "No device with MAC address " + _arguments.get(0) + " found.");
         } else {
-            BluetoothDevicePasswordFeature devFeature = device
+            DevicePasswordFeature devFeature = device
                     .getFeature(FeatureIdent.PAULMANN_DEVICE_PASSWORD_FEATURE);
             if (devFeature != null) {
                 if (!devFeature.authenticate(password)) {
